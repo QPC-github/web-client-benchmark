@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Bruno de Carvalho
+ * Copyright (c) 2012-2013 eBay Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.factor45.jhcb.result;
+package org.ebaysf.webclient.benchmark;
 
 import java.util.Collection;
 
 /**
  * @author <a href="http://bruno.factor45.org/">Bruno de Carvalho</a>
+ * @author Jason Brittain
  */
 public class BatchResult {
-
-    // internal vars --------------------------------------------------------------------------------------------------
 
     private final int batchTargetRequests;
     private final int batchSuccessfulRequests;
@@ -30,8 +29,6 @@ public class BatchResult {
     private final float averageTimePerThread;
     private final float averageTimePerRequest;
     private final long totalBatchTime;
-
-    // constructors ---------------------------------------------------------------------------------------------------
 
     public BatchResult(Collection<ThreadResult> threadResults, long totalTime) {
         int targetRequests = 0;
@@ -61,8 +58,6 @@ public class BatchResult {
         this.totalBatchTime = totalTime;
     }
 
-    // getters & setters ----------------------------------------------------------------------------------------------
-
     public int getBatchTargetRequests() {
         return batchTargetRequests;
     }
@@ -87,11 +82,9 @@ public class BatchResult {
         return totalBatchTime;
     }
 
-    // low level overrides --------------------------------------------------------------------------------------------
-
     @Override
     public String toString() {
-        return "BatchResult{" +
+        return "BatchResult: " +
                "requestsPerSecond=" + BenchmarkResult.decimal(1000000000f / this.averageTimePerRequest) +
                ", batchTargetRequests=" + batchTargetRequests +
                ", batchSuccessfulRequests=" + batchSuccessfulRequests +
@@ -99,6 +92,6 @@ public class BatchResult {
                "ms, averageTimePerThread=" + BenchmarkResult.decimal(averageTimePerThread / 1000000f) +
                "ms, averageTimePerRequest=" + BenchmarkResult.decimal(averageTimePerRequest / 1000000f) +
                "ms, totalBatchTime=" + BenchmarkResult.decimal(totalBatchTime / 1000000f) +
-               "ms}";
+               "ms";
     }
 }

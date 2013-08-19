@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Bruno de Carvalho
+ * Copyright (c) 2012-2013 eBay Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.factor45.jhcb.result;
+package org.ebaysf.webclient.benchmark;
 
 /**
  * @author <a href="http://bruno.factor45.org/">Bruno de Carvalho</a>
+ * @author Jason Brittain
  */
 public class ThreadResult {
-
-    // internal vars --------------------------------------------------------------------------------------------------
 
     private final int targetRequests;
     private final int successfulRequests;
     private final long totalTime;
-
-    // constructors ---------------------------------------------------------------------------------------------------
 
     public ThreadResult(int targetRequests, int successfulRequests, long totalTime) {
         this.targetRequests = targetRequests;
         this.successfulRequests = successfulRequests;
         this.totalTime = totalTime;
     }
-
-    // getters & setters ----------------------------------------------------------------------------------------------
 
     public int getTargetRequests() {
         return targetRequests;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Bruno de Carvalho
+ * Copyright (c) 2012-2013 eBay Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.factor45.jhcb.result;
+package org.ebaysf.webclient.benchmark;
 
 import java.util.List;
 
@@ -21,8 +21,6 @@ import java.util.List;
  * @author <a href="http://bruno.factor45.org/">Bruno de Carvalho</a>
  */
 public class BenchmarkResult {
-
-    // internal vars --------------------------------------------------------------------------------------------------
 
     private final int threads;
     private final int batches;
@@ -33,8 +31,6 @@ public class BenchmarkResult {
     private final float averageBatchTime;
     private final long totalBenchmarkTime;
     private final float requestsPerSecond;
-
-    // constructors ---------------------------------------------------------------------------------------------------
 
     public BenchmarkResult(int threads, int batches, List<BatchResult> results) {
         this.threads = threads;
@@ -64,8 +60,6 @@ public class BenchmarkResult {
         this.requestsPerSecond = 1000000000f / this.averageRequestTime;
     }
 
-    // public static methods ------------------------------------------------------------------------------------------
-
     public static String decimal(double d) {
         return decimal(d, 2);
     }
@@ -93,8 +87,6 @@ public class BenchmarkResult {
         int pos = s.indexOf('.');
         return s.substring(0, Math.min(pos + 1 + decimalUnits, s.length())); // xxxx.yy
     }
-
-    // getters & setters ----------------------------------------------------------------------------------------------
 
     public int getThreads() {
         return threads;
@@ -132,20 +124,16 @@ public class BenchmarkResult {
         return requestsPerSecond;
     }
 
-    // low level overrides --------------------------------------------------------------------------------------------
-
     @Override
     public String toString() {
-        return "BenchmarkResult{" +
-               "requestsPerSecond=" + decimal(requestsPerSecond) +
-               ", threads=" + threads +
-               ", batches=" + batches +
-               ", targetRequests=" + targetRequests +
-               ", successfulRequests=" + successfulRequests +
-               ", failedRequests=" + failedRequests +
-               ", averageRequestTime=" + decimal(averageRequestTime / 1000000f) +
-               "ms, averageBatchTime=" + decimal(averageBatchTime / 1000000f) +
+        return "BenchmarkResult: " +
+               "successful=" + successfulRequests +
+               ", failed=" + failedRequests +
+               ", average=" + decimal(averageRequestTime / 1000000f) +
+               "ms, requestsPerSecond=" + decimal(requestsPerSecond) +
+               ", averageBatchTime=" + decimal(averageBatchTime / 1000000f) +
                "ms, totalBenchmarkTime=" + decimal(totalBenchmarkTime / 1000000f) +
-               "ms}";
+               "ms, targetRequests=" + targetRequests;
+               
     }
 }

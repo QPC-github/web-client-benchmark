@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Bruno de Carvalho
+ * Copyright (c) 2012-2013 eBay Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.factor45.jhcb.benchmark;
+package org.ebaysf.webclient.benchmark;
 
-import com.ning.http.client.Response;
-import com.ning.http.client.SimpleAsyncHttpClient;
-import com.ning.http.client.ThrowableHandler;
-import org.factor45.jhcb.result.BatchResult;
-import org.factor45.jhcb.result.ThreadResult;
+import org.asynchttpclient.Response;
+import org.asynchttpclient.SimpleAsyncHttpClient;
+import org.asynchttpclient.ThrowableHandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,21 +30,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author <a href="http://bruno.factor45.org/">Bruno de Carvalho</a>
+ * @author Jason Brittain
  */
-public class SimpleAhcBenchmark
-        extends AbstractBenchmark {
-
-    // internal vars --------------------------------------------------------------------------------------------------
+public class NingSimpleAhcBenchmarkTest extends AbstractBenchmarkTest {
 
     private SimpleAsyncHttpClient client;
-
-    // constructors ---------------------------------------------------------------------------------------------------
-
-    public SimpleAhcBenchmark(int threads, int requestsPerThreadPerBatch, int batches, String uri) {
-        super(threads, requestsPerThreadPerBatch, batches, uri);
-    }
-
-    // AbstractBenchmark ----------------------------------------------------------------------------------------------
 
     @Override
     protected void setup() {
@@ -63,12 +51,16 @@ public class SimpleAhcBenchmark
         this.client.close();
     }
 
-    @Override
-    protected void warmup() {
+    public void testAsyncRequests() {
+		String serverAsyncUrl = serverBaseUrl + serverAsyncUri;
+		System.out.println(this.doBenchmark(serverAsyncUrl, "asyncWarmup", "runAsyncBatch"));
+    }
+
+    public void asyncWarmup(final String testUrl) {
         List<Future<Response>> futures = new ArrayList<Future<Response>>(this.warmupRequests);
         for (int i = 0; i < this.warmupRequests; i++) {
             try {
-                futures.add(this.client.derive().setUrl(this.url).build().get());
+                futures.add(this.client.derive().setUrl(testUrl).build().get());
             }
             catch (IOException e) {
                 System.err.println("Failed to execute get at iteration #" + i);
@@ -88,8 +80,7 @@ public class SimpleAhcBenchmark
         }
     }
 
-    @Override
-    protected BatchResult runBatch() {
+    public BatchResult runAsyncBatch(final String testUrl) {
         final CountDownLatch latch = new CountDownLatch(this.threads);
         final Vector<ThreadResult> threadResults = new Vector<ThreadResult>(this.threads);
 
@@ -97,17 +88,15 @@ public class SimpleAhcBenchmark
         for (int i = 0; i < this.threads; i++) {
             this.executor.submit(new Runnable() {
 
-                @Override
                 public void run() {
                     final AtomicInteger successful = new AtomicInteger();
                     long start = System.nanoTime();
                     final CountDownLatch responseReceivedLatch = new CountDownLatch(requestsPerThreadPerBatch);
                     for (int i = 0; i < requestsPerThreadPerBatch; i++) {
                         try {
-                            SimpleAsyncHttpClient derived = client.derive().setUrl(url).build();
+                            SimpleAsyncHttpClient derived = client.derive().setUrl(testUrl).build();
 
                             Future<Response> future = derived.get(new ThrowableHandler() {
-                                @Override
                                 public void onThrowable(Throwable t) {
                                     responseReceivedLatch.countDown();
                                 }
