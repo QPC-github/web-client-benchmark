@@ -1,5 +1,16 @@
 ## This project tests the performance of several OSS Java web clients
 
+New features in this version of the benchmark suite include:
+* Upgraded the benchmark suite to use Ning AHC 2.0.0 (snapshot).
+* There are now specific benchmark tests for Ning AHC 2.0.0 (snapshot), one for each back end HTTP provider: Netty and Grizzly.
+* There are now specific benchmark tests for the Jetty 9 client as well as the Jetty 8 client.
+* There is now a benchmark test for the Apache HTTPComponents 4 client.
+* All test code run as JUnit tests that run from Maven, instead of plain Java applications that you must invoke from the command line.
+* The pom.xml is able to detect different JDK brands and versions that the user has installed on their machine, and is able to switch between them using Maven command line arguments.  Sun JDK and IBM JDK are both supported, and Java 1.6 and 1.7 are both supported.
+* The pom.xml contains selectable Maven profiles for Sun HotSpot 1.6, Sun HotSpot 1.7, IBM J9 1.6, and IBM J9 1.7.
+* The tests build, then run on the specified JVM brand and version, regardless of what the default Java installation is set to.
+* The server base URL is specifiable on the Maven command line.
+
 NOTE: Before running any benchmark, make sure that you set your shell user's
 file descriptor limit to at least 4096:
 
