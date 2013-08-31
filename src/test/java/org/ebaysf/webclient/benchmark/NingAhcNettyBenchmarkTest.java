@@ -46,11 +46,11 @@ public class NingAhcNettyBenchmarkTest extends AbstractBenchmarkTest {
 
         NettyAsyncHttpProviderConfig providerConfig = new NettyAsyncHttpProviderConfig();
         providerConfig.setUseBlockingIO(false);
-        AsyncHttpClientConfig config = new AsyncHttpClientConfig.Builder()
+		AsyncHttpClientConfig config = new AsyncHttpClientConfig.Builder()
 				.setAsyncHttpClientProviderConfig(providerConfig)
 				.setAsyncConnectMode(true)
 				.setMaximumConnectionsTotal(-1)
-				.setMaximumConnectionsPerHost(4500)
+				.setMaximumConnectionsPerHost(64)
 				.setCompressionEnabled(false)
 				.setAllowPoolingConnection(true /* keep-alive connection */)
 				//.setAllowPoolingConnection(false /* no keep-alive connection */)
@@ -132,17 +132,19 @@ public class NingAhcNettyBenchmarkTest extends AbstractBenchmarkTest {
 			                	client.prepareGet(testUrl).execute(new AsyncCompletionHandler<Response>() {
 			                    @Override
 			                    public Response onCompleted(Response response) throws Exception {
-			                    		successful.incrementAndGet();
-			                    		responseReceivedLatch.countDown();
+		                    		// Make the response body into a String, then we throw it away because we're done.
+		                    		response.getResponseBody("UTF-8");
+		                    		successful.incrementAndGet();
+			                    	responseReceivedLatch.countDown();
 			                        return response;
 			                    }
 
 			                    @Override
 			                    public void onThrowable(Throwable t) {
 			                        // Something wrong happened.
-			                    		System.out.println(t);
-			                    		//t.printStackTrace();
-			                    		responseReceivedLatch.countDown();
+			                    	System.out.println(t);
+			                    	//t.printStackTrace();
+			                    	responseReceivedLatch.countDown();
 			                    }
 			                });
 			                //futures.add(future);
@@ -205,6 +207,8 @@ public class NingAhcNettyBenchmarkTest extends AbstractBenchmarkTest {
                             Response response = client.prepareGet(testUrl).execute().get();
 
                             if ((response.getStatusCode() >= 200) && (response.getStatusCode() <= 299)) {
+	                    		// Make the response body into a String, then we throw it away because we're done.
+	                    		response.getResponseBody("UTF-8");
                                 successful.incrementAndGet();
                             }
                         } catch (InterruptedException e) {

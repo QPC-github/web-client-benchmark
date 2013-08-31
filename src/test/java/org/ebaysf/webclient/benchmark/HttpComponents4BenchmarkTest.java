@@ -44,6 +44,7 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
 /**
@@ -168,7 +169,9 @@ public class HttpComponents4BenchmarkTest extends AbstractBenchmarkTest {
                     	        
                 				@Override
                     	        public void completed(final Content content) {
-                    	        		successful.incrementAndGet();
+                					// Make the response body into a String, then we throw it away because we're done.
+                					content.asString();
+                					successful.incrementAndGet();
                     	        }
                     	        
                 				@Override
@@ -222,8 +225,9 @@ public class HttpComponents4BenchmarkTest extends AbstractBenchmarkTest {
                         HttpGet get = new HttpGet(testUrl);
                         try {
                             HttpResponse response = client.execute(get);
-                            response.getEntity().consumeContent();
                             if (response.getStatusLine().getStatusCode() == 200) {
+                				// Make the response body into a String, then we throw it away because we're done.
+                                EntityUtils.toString(response.getEntity());
                                 successful.incrementAndGet();
                             }
                         } catch (IOException e) {

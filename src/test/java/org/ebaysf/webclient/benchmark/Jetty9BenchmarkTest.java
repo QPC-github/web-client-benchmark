@@ -15,20 +15,16 @@
  */
 package org.ebaysf.webclient.benchmark;
 
-import java.io.IOException;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Vector;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.ebaysf.webclient.benchmark.BatchResult;
-import org.ebaysf.webclient.benchmark.ThreadResult;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.HttpExchange;
 import org.eclipse.jetty.client.api.ContentResponse;
-import org.eclipse.jetty.client.api.Result;
+import org.eclipse.jetty.client.util.BufferingResponseListener;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * @author Jason Brittain
@@ -114,9 +110,10 @@ public class Jetty9BenchmarkTest extends AbstractBenchmarkTest {
 					final long start = System.nanoTime();
 					for (int i = 0; i < requestsPerThreadPerBatch; i++) {
 						client.newRequest(testUrl).send(
-							new ContentResponse.CompleteListener() {
+							new BufferingResponseListener() {
 								public void onComplete(org.eclipse.jetty.client.api.Result result) {
 									if (result.isSucceeded()) {
+										getContentAsString("UTF-8");
 										successful.incrementAndGet();
 									} else if (result.isFailed()) {
 										System.out.println(result);
@@ -164,8 +161,9 @@ public class Jetty9BenchmarkTest extends AbstractBenchmarkTest {
                     for (int i = 0; i < requestsPerThreadPerBatch; i++) {
 						try {
 							ContentResponse response = client.newRequest(testUrl).send();
-		        				int status = response.getStatus();
+							int status = response.getStatus();
 							if (status == 200) {
+								response.getContentAsString();
 								successful.incrementAndGet();
 							}
 						} catch (Exception e) {

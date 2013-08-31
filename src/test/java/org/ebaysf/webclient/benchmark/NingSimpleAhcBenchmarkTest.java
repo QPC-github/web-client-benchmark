@@ -69,14 +69,17 @@ public class NingSimpleAhcBenchmarkTest extends AbstractBenchmarkTest {
 
         for (Future<Response> future : futures) {
             try {
-                future.get();
+                Response response = future.get();
+        		// Make the response body into a String, then we throw it away because we're done.
+        		response.getResponseBody("UTF-8");
             }
             catch (InterruptedException e) {
                 e.printStackTrace();
-            }
-            catch (ExecutionException e) {
+            } catch (ExecutionException e) {
                 e.printStackTrace();
-            }
+            } catch (IOException e) {
+				e.printStackTrace();
+			}
         }
     }
 
@@ -107,6 +110,8 @@ public class NingSimpleAhcBenchmarkTest extends AbstractBenchmarkTest {
                                 Response response = future.get();
 
                                 if ((response.getStatusCode() >= 200) && (response.getStatusCode() <= 299)) {
+		                    		// Make the response body into a String, then we throw it away because we're done.
+		                    		response.getResponseBody("UTF-8");
                                     successful.incrementAndGet();
                                 }
                             }

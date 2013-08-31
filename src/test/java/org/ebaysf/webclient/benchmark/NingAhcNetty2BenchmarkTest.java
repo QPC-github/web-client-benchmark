@@ -55,7 +55,7 @@ public class NingAhcNetty2BenchmarkTest extends AbstractBenchmarkTest {
 				.setAsyncHttpClientProviderConfig(providerConfig)
 				.setAsyncConnectMode(true)
 				.setMaximumConnectionsTotal(-1)
-				.setMaximumConnectionsPerHost(4500)
+				.setMaximumConnectionsPerHost(64)
 				.setCompressionEnabled(false)
 				.setAllowPoolingConnection(true /* keep-alive connection */)
 				//.setAllowPoolingConnection(false /* no keep-alive connection */)
@@ -142,6 +142,8 @@ public class NingAhcNetty2BenchmarkTest extends AbstractBenchmarkTest {
 									requestQueue.add(client.prepareGet(testUrl).execute(new AsyncCompletionHandler<Response>() {
 										@Override
 										public Response onCompleted(Response response) throws Exception {
+				                    		// Make the response body into a String, then we throw it away because we're done.
+				                    		response.getResponseBody("UTF-8");
 											successful[t].incrementAndGet();
 											return response;
 										}
@@ -171,8 +173,10 @@ public class NingAhcNetty2BenchmarkTest extends AbstractBenchmarkTest {
 				while (counter < threads * requestsPerThreadPerBatch) {
 					try {
 						Future<Response> responseFuture = requestQueue.take();
-						counter++;
-						responseFuture.get();
+						Response response = responseFuture.get();
+                		// Make the response body into a String, then we throw it away because we're done.
+                		response.getResponseBody("UTF-8");
+                		counter++;
 					} catch (Exception e) {
 						System.err.println("Failed to execute get at iteration #" + counter);
 						e.printStackTrace();
@@ -227,6 +231,8 @@ public class NingAhcNetty2BenchmarkTest extends AbstractBenchmarkTest {
                             Response response = client.prepareGet(testUrl).execute().get();
 
                             if ((response.getStatusCode() >= 200) && (response.getStatusCode() <= 299)) {
+	                    		// Make the response body into a String, then we throw it away because we're done.
+	                    		response.getResponseBody("UTF-8");
                                 successful.incrementAndGet();
                             }
                         } catch (InterruptedException e) {

@@ -50,7 +50,7 @@ public class NingAhcGrizzlyBenchmarkTest extends AbstractBenchmarkTest {
 				.setAsyncHttpClientProviderConfig(providerConfig)
 		                .setAsyncConnectMode(true)
 				.setMaximumConnectionsTotal(-1)
-				.setMaximumConnectionsPerHost(4500)
+				.setMaximumConnectionsPerHost(64)
 				.setCompressionEnabled(false)
 				.setAllowPoolingConnection(true /* keep-alive connection */)
 				// .setAllowPoolingConnection(false /* no keep-alive connection */)
@@ -132,6 +132,8 @@ public class NingAhcGrizzlyBenchmarkTest extends AbstractBenchmarkTest {
 			                	client.prepareGet(testUrl).execute(new AsyncCompletionHandler<Response>() {
 			                    @Override
 			                    public Response onCompleted(Response response) throws Exception {
+			                    		// Make the response body into a String, then we throw it away because we're done.
+			                    		response.getResponseBody("UTF-8");
 			                    		successful.incrementAndGet();
 			                    		responseReceivedLatch.countDown();
 			                        return response;
@@ -205,6 +207,8 @@ public class NingAhcGrizzlyBenchmarkTest extends AbstractBenchmarkTest {
                             Response response = client.prepareGet(testUrl).execute().get();
 
                             if ((response.getStatusCode() >= 200) && (response.getStatusCode() <= 299)) {
+	                    		// Make the response body into a String, then we throw it away because we're done.
+	                    		response.getResponseBody("UTF-8");
                                 successful.incrementAndGet();
                             }
                         } catch (InterruptedException e) {

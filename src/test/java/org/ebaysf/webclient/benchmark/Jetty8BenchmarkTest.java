@@ -139,6 +139,7 @@ public class Jetty8BenchmarkTest extends AbstractBenchmarkTest {
                         		@Override
                         		protected void onResponseComplete() throws IOException {
                         			if (getResponseStatus() == 200) {
+                        				getResponseContent();
                         				successful.incrementAndGet();
                         			}
                         			responseReceivedLatch.countDown();
@@ -197,7 +198,11 @@ public class Jetty8BenchmarkTest extends AbstractBenchmarkTest {
 							// Wait until the exchange is terminated
 							int exchangeState = exchange.waitForDone();
 							if (exchangeState == HttpExchange.STATUS_COMPLETED) {
-								successful.incrementAndGet();
+								if ((exchange.getStatus() >= 200) && (exchange.getStatus() <= 299)) {
+		                    		// Make the response body into a String, then we throw it away because we're done.
+		                    		exchange.getResponseContent();
+	                                successful.incrementAndGet();
+	                            }
 							}
 						} catch (IOException e) {
 							// Failed request.. it doesn't get counted as successful.
