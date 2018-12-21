@@ -1,5 +1,7 @@
-## This project tests the performance of several OSS Java web clients
+##Archived Project
+Please note that this project is archived and read-only. 
 
+## This project tests the performance of several OSS Java web clients
 New features in this version of the benchmark suite include:
 * Upgraded the benchmark suite to use Ning AHC 2.0.0 (snapshot).
 * There are now specific benchmark tests for Ning AHC 2.0.0 (snapshot), one for each back end HTTP provider: Netty and Grizzly.
